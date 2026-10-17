@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherMedia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="logo"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#4cc9f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><circle cx="12" cy="15.5" r="1.3" fill="#4cc9f0"/></svg></div>
+      <h1>CipherMedia</h1>
+      <p>Lock or unlock images, audio and video with a password. Files are processed in memory and never saved on the server.</p>
+      <ul class="badges"><li>AES-256-GCM</li><li>scrypt key derivation</li><li>nothing stored</li></ul>
+    </header>
+
+    <form id="form" class="panel" novalidate>
+      <div class="modes" role="radiogroup" aria-label="Mode">
+        <input type="radio" name="mode" id="m-enc" value="encrypt" checked><label for="m-enc">Encrypt</label>
+        <input type="radio" name="mode" id="m-dec" value="decrypt"><label for="m-dec">Decrypt</label>
+      </div>
+
+      <div class="modes" id="keymodes" role="radiogroup" aria-label="Key type">
+        <input type="radio" name="key_mode" id="k-pw" value="password" checked><label for="k-pw">My password</label>
+        <input type="radio" name="key_mode" id="k-gen" value="generate"><label for="k-gen">No password (auto key)</label>
+      </div>
+
+      <label class="drop" id="drop">
+        <input type="file" id="file" name="file">
+        <strong id="drop-title"></strong>
+        <span id="drop-hint"></span>
+      </label>
+
+      <div class="field" id="pw-field">
+        <label for="password" id="pw-label">Password</label>
+        <div class="pw">
+          <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Enter a password">
+          <button type="button" class="ghost" id="toggle" aria-pressed="false">Show</button>
+        </div>
+      </div>
+      <p class="note" id="gen-note" hidden>You won't need to pick a password. A strong random key is created for you after encrypting. Save it, because it's required to decrypt.</p>
+
+      <button type="submit" class="primary" id="go"></button>
+      <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+
+      <div id="keybox" class="keybox" hidden>
+        <span>Your key. Save it now, it won't be shown again.</span>
+        <div class="pw"><input type="text" id="genkey" readonly><button type="button" class="ghost" id="copy">Copy</button></div>
+      </div>
+
+      <div id="result" class="result" hidden>
+        <div><strong id="out-name"></strong><span id="out-size"></span></div>
+        <a id="download" class="primary" href="#">Download</a>
+      </div>
+    </form>
+
+    <section class="how">
+      <h2>How it works</h2>
+      <p>Your file is uploaded to the server, where a key is derived from your password using scrypt. The file is then encrypted with AES-256-GCM, which also detects tampering or a wrong password. Everything happens in memory and nothing is stored. Decrypting reverses the process using the same password or key, restoring your original file and name.</p>
+    </section>
+  </main>
+  <script>window.MAX_MB = {{ max_mb }};</script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
